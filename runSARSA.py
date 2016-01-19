@@ -15,8 +15,8 @@ sim.nonRandomWorld         = True
 sim.circleRadius           = 2.5
 sim.worldScale             = 1
 sim.supervisedTrainingTime = 3000
-sim.learningTime = 9000
-sim.defaultControllerTime = 1000
+sim.learningTime           = 300
+sim.defaultControllerTime  = 300
 
 
 sim.supervisedTrainingTime = 10

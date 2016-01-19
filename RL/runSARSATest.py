@@ -75,8 +75,8 @@ sim.run(launchApp=False)
 
 
 # save it to a file
-sim.saveToFile('test')
-sim.setupPlayback()
+#sim.saveToFile('test')
+#sim.setupPlayback()
 
 # Testing
 #

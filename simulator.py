@@ -21,9 +21,6 @@ from world import World
 from car import CarPlant
 from sensor import SensorObj
 from controller import ControllerObj
-from sarsaContinuous import SARSAContinuous
-from sarsaDiscrete import SARSADiscrete
-from reward import Reward
 
 
 class Simulator(object):
