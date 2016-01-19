@@ -58,7 +58,7 @@ class Simulator(object):
         self.options['World']['randomSeed'] = 40
         self.options['World']['percentObsDensity'] = 7.5
         self.options['World']['nonRandomWorld'] = True
-        self.options['World']['circleRadius'] = 1.75
+        self.options['World']['circleRadius'] = 1.0
         self.options['World']['scale'] = 1.0
 
         self.options['Sensor'] = dict()
@@ -138,7 +138,7 @@ class Simulator(object):
 
         # create the things needed for simulation
         om.removeFromObjectModel(om.findObjectByName('world'))
-        self.world = World.buildCircleWorld(percentObsDensity=self.options['World']['percentObsDensity'],
+        self.world = World.buildWarehouseWorld(percentObsDensity=self.options['World']['percentObsDensity'],
                                             circleRadius=self.options['World']['circleRadius'],
                                             nonRandom=self.options['World']['nonRandomWorld'],
                                             scale=self.options['World']['scale'],

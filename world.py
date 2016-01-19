@@ -23,18 +23,19 @@ class World(object):
         return obj
 
     @staticmethod
-    def buildBoundaries(d, scale=1.0):
-        worldXmin = -20
-        worldXmax = 100
+    def buildBoundaries(d, scale=1.0, boundaryType="Warehouse"):
+        
+        if boundaryType == "Warehouse":
+            worldXmin = -20
+            worldXmax = 100
+            worldYmin = -10
+            worldYmax = 10
 
-        worldYmin = -50
-        worldYmax = 50
-
-        if scale is not None:
+        if boundaryType == "Square":
             worldXmin = -50*scale
             worldXmax = 50*scale
             worldYmin = -50*scale
-            worldYmax = 50*scale
+            worldYmax = 10*scale
 
         # draw boundaries for the world
         NW = (worldXmax, worldYmax, 0)
@@ -106,11 +107,113 @@ class World(object):
             np.random.seed(randomSeed)
 
         d = DebugData()
-        worldXmin, worldXmax, worldYmin, worldYmax = World.buildBoundaries(d, scale=scale)
+        worldXmin, worldXmax, worldYmin, worldYmax = World.buildBoundaries(d, scale=scale, boundaryType="Square")
         #print "boundaries done"
 
         worldArea = (worldXmax-worldXmin)*(worldYmax-worldYmin)
         #print worldArea
+        obsScalingFactor = 1.0/12.0
+        maxNumObstacles = obsScalingFactor * worldArea
+        
+        numObstacles = int(obstaclesInnerFraction**2 * percentObsDensity/100.0 * maxNumObstacles)
+        #print numObstacles
+
+        # draw random stick obstacles
+        obsLength = 2.0
+
+        obsXmin = worldXmin + (1-obstaclesInnerFraction)/2.0*(worldXmax - worldXmin)
+        obsXmax = worldXmax - (1-obstaclesInnerFraction)/2.0*(worldXmax - worldXmin)
+        obsYmin = worldYmin + (1-obstaclesInnerFraction)/2.0*(worldYmax - worldYmin)
+        obsYmax = worldYmax - (1-obstaclesInnerFraction)/2.0*(worldYmax - worldYmin)
+
+        for i in xrange(numObstacles):
+            firstX = obsXmin + np.random.rand()*(obsXmax-obsXmin)
+            firstY = obsYmin + np.random.rand()*(obsYmax-obsYmin)
+            firstEndpt = (firstX,firstY,+0.2)
+            secondEndpt = (firstX,firstY,-0.2)
+
+            #d.addLine(firstEndpt, secondEndpt, radius=2*np.random.randn())
+            d.addLine(firstEndpt, secondEndpt, radius=circleRadius)
+
+
+        obj = vis.showPolyData(d.getPolyData(), 'world')
+
+        world = World()
+        world.visObj = obj
+        world.Xmax = worldXmax
+        world.Xmin = worldXmin
+        world.Ymax = worldYmax
+        world.Ymin = worldYmin
+        world.numObstacles = numObstacles
+        world.percentObsDensity = percentObsDensity
+
+        return world
+
+    @staticmethod
+    def buildWarehouseWorld(percentObsDensity, nonRandom=False, circleRadius=0.1, scale=None, randomSeed=5,
+                         obstaclesInnerFraction=1.0):
+
+        if nonRandom:
+            np.random.seed(randomSeed)
+
+        d = DebugData()
+        worldXmin, worldXmax, worldYmin, worldYmax = World.buildBoundaries(d, scale=scale, boundaryType="Warehouse")
+
+        numObstacles = 8
+ 
+        obsLength = 2.0
+
+        worldLength = worldXmax - worldXmin
+
+        print worldXmin
+        print worldXmax
+
+        obstacleZone = [worldXmin + 0.2 * worldLength, worldXmax - 0.2 * worldLength ]
+
+        print obstacleZone
+
+        obstacleLength = obstacleZone[1] - obstacleZone[0]
+
+        incrementSize = obstacleLength * 1.0 / numObstacles
+
+        print incrementSize
+
+        leftOrRight = -1.0
+        for i in xrange(numObstacles):
+            
+            firstX = obstacleZone[0] + incrementSize * i
+            leftOrRight = leftOrRight * -1.0
+
+            firstEndpt = (firstX, leftOrRight * worldYmax,0.0)
+            secondEndpt = (firstX, 0.0, 0.0)
+
+            #d.addLine(firstEndpt, secondEndpt, radius=2*np.random.randn())
+            d.addLine(firstEndpt, secondEndpt, radius=circleRadius)
+
+        obj = vis.showPolyData(d.getPolyData(), 'world')
+
+        world = World()
+        world.visObj = obj
+        world.Xmax = worldXmax
+        world.Xmin = worldXmin
+        world.Ymax = worldYmax
+        world.Ymin = worldYmin
+        world.numObstacles = numObstacles
+        world.percentObsDensity = percentObsDensity
+
+        return world
+
+    @staticmethod
+    def buildCircleWarehouseWorld(percentObsDensity, nonRandom=False, circleRadius=3, scale=None, randomSeed=5,
+                         obstaclesInnerFraction=1.0):
+
+        if nonRandom:
+            np.random.seed(randomSeed)
+
+        d = DebugData()
+        worldXmin, worldXmax, worldYmin, worldYmax = World.buildBoundaries(d, scale=scale, boundaryType="Warehouse")
+
+        worldArea = (worldXmax-worldXmin)*(worldYmax-worldYmin)
         obsScalingFactor = 1.0/12.0
         maxNumObstacles = obsScalingFactor * worldArea
         
