@@ -67,7 +67,7 @@ class Simulator(object):
 
 
         self.options['Car'] = dict()
-        self.options['Car']['velocity'] = 12
+        self.options['Car']['velocity'] = 18
 
         self.options['dt'] = 0.05
 
@@ -95,7 +95,7 @@ class Simulator(object):
 
 
         defaultOptions['Car'] = dict()
-        defaultOptions['Car']['velocity'] = 12
+        defaultOptions['Car']['velocity'] = 18
 
         defaultOptions['dt'] = 0.05
 
