@@ -330,19 +330,36 @@ class Simulator(object):
         tol = 5
 
         while True:
+            
+            x = 0.0
+            y =   -5.0
+            theta = 0 #+ np.random.uniform(0,2*np.pi,1)[0] * 0.01
+            
+            self.Car.setCarState(x,y,theta)
+            self.setRobotFrameState(x,y,theta)
+
+            print "In loop"
+
+            if not self.checkInCollision():
+                break
+                
+        return x,y,theta
+
+
+    def setRandomCollisionFreeInitialState(self):
+        tol = 5
+
+        while True:
+            
             x = np.random.uniform(self.world.Xmin+tol, self.world.Xmax-tol, 1)[0]
             y = np.random.uniform(self.world.Ymin+tol, self.world.Ymax-tol, 1)[0]
             theta = np.random.uniform(0,2*np.pi,1)[0]
+            
             self.Car.setCarState(x,y,theta)
             self.setRobotFrameState(x,y,theta)
 
             if not self.checkInCollision():
                 break
-
-        # if self.checkInCollision():
-        #     print "IN COLLISION"
-        # else:
-        #     print "COLLISION FREE"
 
         return x,y,theta
 
