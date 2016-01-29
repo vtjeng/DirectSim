@@ -298,11 +298,11 @@ class World(object):
     @staticmethod
     def buildRobot(x=0,y=0):
         #print "building robot"
-        polyData = ioUtils.readPolyData('celica.obj')
+        polyData = ioUtils.readPolyData('crazyflie.obj')
         
-        scale = 0.04
+        scale = 0.01
         t = vtk.vtkTransform()
-        t.RotateZ(90)
+        t.RotateX(90)
         t.Scale(scale, scale, scale)
         polyData = filterUtils.transformPolyData(polyData, t)
 
