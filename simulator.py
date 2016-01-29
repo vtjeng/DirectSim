@@ -431,16 +431,17 @@ class Simulator(object):
         controllerType = self.getControllerTypeFromCounter(sliderIdx)
         colorMaxRange = self.colorMap[controllerType]
 
-        for i in xrange(self.Sensor.numRays):
-            ray = self.Sensor.rays[:,i]
-            rayTransformed = np.array(frame.transform.TransformNormal(ray))
-            #print "rayTransformed is", rayTransformed
-            intersection = self.Sensor.raycast(self.locator, origin, origin + rayTransformed*self.Sensor.rayLength)
+        for j in xrange(self.Sensor.numLayers):
+            for i in xrange(self.Sensor.numRays):
+                ray = self.Sensor.rays[:,i,j]
+                rayTransformed = np.array(frame.transform.TransformNormal(ray))
+                #print "rayTransformed is", rayTransformed
+                intersection = self.Sensor.raycast(self.locator, origin, origin + rayTransformed*self.Sensor.rayLength)
 
-            if intersection is not None:
-                d.addLine(origin, intersection, color=[1,0,0])
-            else:
-                d.addLine(origin, origin+rayTransformed*self.Sensor.rayLength, color=colorMaxRange)
+                if intersection is not None:
+                    d.addLine(origin, intersection, color=[1,0,0])
+                else:
+                    d.addLine(origin, origin+rayTransformed*self.Sensor.rayLength, color=colorMaxRange)
 
         vis.updatePolyData(d.getPolyData(), 'rays', colorByName='RGB255')
 

@@ -9,6 +9,7 @@ class SensorObj(object):
     def __init__(self, FOV=180.0, numRays=20, rayLength=8):
         self.numRays = numRays
         self.rayLength = rayLength
+        self.numLayers = 5
 
         FOVrad = FOV * np.pi/180.0
         self.angleMin = -FOVrad/2
@@ -16,9 +17,13 @@ class SensorObj(object):
 
         self.angleGrid = np.linspace(self.angleMin, self.angleMax, self.numRays)
 
-        self.rays = np.zeros((3,self.numRays))
-        self.rays[0,:] = np.cos(self.angleGrid)
-        self.rays[1,:] = -np.sin(self.angleGrid)
+        self.rays = np.zeros((3,self.numRays,self.numLayers))
+        
+        for j in xrange(self.numLayers):
+            self.rays[0,:,j] = np.cos(self.angleGrid)
+            self.rays[1,:,j] = -np.sin(self.angleGrid)
+            self.rays[2,:,j] = -0.6 + 0.3*j
+        
 
     def setLocator(self, locator):
         self.locator = locator
@@ -29,14 +34,15 @@ class SensorObj(object):
 
         origin = np.array(frame.transform.GetPosition())
 
-        for i in range(0,self.numRays):
-            ray = self.rays[:,i]
-            rayTransformed = np.array(frame.transform.TransformNormal(ray))
-            intersection = self.raycast(self.locator, origin, origin + rayTransformed*self.rayLength)
-            if intersection is None:
-                distances[i] = self.rayLength
-            else:
-                distances[i] = np.linalg.norm(intersection - origin)
+        for j in range(self.numLayers):
+            for i in range(0,self.numRays):
+                ray = self.rays[:,i,j]
+                rayTransformed = np.array(frame.transform.TransformNormal(ray))
+                intersection = self.raycast(self.locator, origin, origin + rayTransformed*self.rayLength)
+                if intersection is None:
+                    distances[i] = self.rayLength
+                else:
+                    distances[i] = np.linalg.norm(intersection - origin)
 
         return distances
 
