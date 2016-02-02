@@ -1,5 +1,5 @@
 __author__ = 'manuelli'
-from simulator import Simulator
+from CarSimulator import Simulator
 
 sim = Simulator(autoInitialize=False, verbose=False)
 

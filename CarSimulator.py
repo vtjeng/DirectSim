@@ -63,7 +63,7 @@ class Simulator(object):
 
         self.options['Sensor'] = dict()
         self.options['Sensor']['rayLength'] = 10
-        self.options['Sensor']['numRays'] = 9
+        self.options['Sensor']['numRays'] = 20
 
 
         self.options['Car'] = dict()
@@ -91,7 +91,7 @@ class Simulator(object):
 
         defaultOptions['Sensor'] = dict()
         defaultOptions['Sensor']['rayLength'] = 10
-        defaultOptions['Sensor']['numRays'] = 9
+        defaultOptions['Sensor']['numRays'] = 20
 
 
         defaultOptions['Car'] = dict()
