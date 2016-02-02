@@ -59,7 +59,7 @@ class Simulator(object):
         self.options['World']['percentObsDensity'] = 7.5
         self.options['World']['nonRandomWorld'] = True
         self.options['World']['circleRadius'] = 1.0
-        self.options['World']['scale'] = 1.0
+        self.options['World']['scale'] = 10.0
 
         self.options['Sensor'] = dict()
         self.options['Sensor']['rayLength'] = 10
@@ -67,12 +67,12 @@ class Simulator(object):
 
 
         self.options['Car'] = dict()
-        self.options['Car']['velocity'] = 4
+        self.options['Car']['velocity'] = 16
 
         self.options['dt'] = 0.05
 
         self.options['runTime'] = dict()
-        self.options['runTime']['defaultControllerTime'] = 1000
+        self.options['runTime']['defaultControllerTime'] = 100
 
 
     def setDefaultOptions(self):
@@ -86,7 +86,7 @@ class Simulator(object):
         defaultOptions['World']['percentObsDensity'] = 7.5
         defaultOptions['World']['nonRandomWorld'] = True
         defaultOptions['World']['circleRadius'] = 1.75
-        defaultOptions['World']['scale'] = 1.0
+        defaultOptions['World']['scale'] = 10.0
 
 
         defaultOptions['Sensor'] = dict()
@@ -95,13 +95,13 @@ class Simulator(object):
 
 
         defaultOptions['Car'] = dict()
-        defaultOptions['Car']['velocity'] = 4
+        defaultOptions['Car']['velocity'] = 16
 
         defaultOptions['dt'] = 0.05
 
 
         defaultOptions['runTime'] = dict()
-        defaultOptions['runTime']['defaultControllerTime'] = 1000
+        defaultOptions['runTime']['defaultControllerTime'] = 100
 
 
         for k in defaultOptions:
