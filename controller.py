@@ -26,6 +26,7 @@ class ControllerObj(object):
 
         #u = self.countStuffController()
         u, actionIdx = self.countInverseDistancesController()
+        u, actionIdx = self.supervisedDPController()
 
         if randomize:
             if np.random.uniform(0,1,1)[0] < self.epsilonRand:
@@ -85,6 +86,15 @@ class ControllerObj(object):
 
         u = self.actionSet[actionIdx]
         return u, actionIdx
+
+    def supervisedDPController(self):
+
+
+        w = np.array([-0.03364086, -0.06146491, -0.11796771, -0.1699006,  -0.00097573,  0.17137526, 0.11952639,  0.06076998,  0.03276566])
+        w = w[::-1]
+        u = np.dot(self.distances, w)
+
+        return u, 0
 
 
     def computeControlInputFromFrame(self):
