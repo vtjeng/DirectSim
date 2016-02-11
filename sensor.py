@@ -1,7 +1,7 @@
-import ddapp.vtkAll as vtk
+import director.vtkAll as vtk
 
 import numpy as np
-import ddapp.objectmodel as om
+import director.objectmodel as om
 
 
 class SensorObj(object):

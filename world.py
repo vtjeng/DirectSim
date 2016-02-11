@@ -1,8 +1,8 @@
-import ddapp.vtkAll as vtk
-from ddapp import ioUtils
-from ddapp import filterUtils
-import ddapp.visualization as vis
-from ddapp.debugVis import DebugData
+import director.vtkAll as vtk
+from director import ioUtils
+from director import filterUtils
+import director.visualization as vis
+from director.debugVis import DebugData
 
 import numpy as np
 

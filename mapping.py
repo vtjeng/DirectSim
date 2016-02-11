@@ -1,9 +1,9 @@
-import ddapp.vtkAll as vtk
+import director.vtkAll as vtk
 
 import numpy as np
-import ddapp.objectmodel as om
-import ddapp.visualization as vis
-from ddapp.debugVis import DebugData
+import director.objectmodel as om
+import director.visualization as vis
+from director.debugVis import DebugData
 
 
 class MappingObj(object):

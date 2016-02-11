@@ -1,6 +1,6 @@
 import numpy as np
 import scipy.integrate as integrate
-import ddapp.objectmodel as om
+import director.objectmodel as om
 
 
 class ControllerObj(object):
@@ -24,8 +24,8 @@ class ControllerObj(object):
         # #Barry 12 controller
         
 
-        #u = self.countStuffController()
-        u, actionIdx = self.countInverseDistancesController()
+        # u = self.countStuffController()
+        # u, actionIdx = self.countInverseDistancesController()
         u, actionIdx = self.supervisedDPController()
 
         if randomize:

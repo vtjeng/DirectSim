@@ -1,13 +1,13 @@
-import ddapp.vtkAll as vtk
-import ddapp.visualization as vis
-import ddapp.objectmodel as om
-from ddapp.debugVis import DebugData
-from ddapp.consoleapp import ConsoleApp
-from ddapp.timercallback import TimerCallback
-from ddapp import applogic
-from ddapp import screengrabberpanel
+import director.vtkAll as vtk
+import director.visualization as vis
+import director.objectmodel as om
+from director.debugVis import DebugData
+from director.consoleapp import ConsoleApp
+from director.timercallback import TimerCallback
+from director import applogic
+from director import screengrabberpanel
 
-from ddapp import transformUtils
+from director import transformUtils
 import numpy as np
 import time
 import scipy.integrate as integrate

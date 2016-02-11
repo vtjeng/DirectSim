@@ -1,6 +1,6 @@
 __author__ = 'manuelli'
 import utils
-import ddapp.objectmodel as om
+import director.objectmodel as om
 import numpy as np
 import matplotlib.pyplot as plt
 

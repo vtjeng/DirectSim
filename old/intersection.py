@@ -1,9 +1,9 @@
-import ddapp.vtkAll as vtk
-import ddapp.visualization as vis
-import ddapp.objectmodel as om
-from ddapp.debugVis import DebugData
-from ddapp.consoleapp import ConsoleApp
-from ddapp import applogic
+import director.vtkAll as vtk
+import director.visualization as vis
+import director.objectmodel as om
+from director.debugVis import DebugData
+from director.consoleapp import ConsoleApp
+from director import applogic
 import numpy as np
 
 
