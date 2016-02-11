@@ -1,0 +1,5 @@
+.idea/*
+.ipynb_checkpoints/*
+
+# avoid commiting compiled python files
+*.pyc
