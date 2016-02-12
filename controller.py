@@ -7,27 +7,16 @@ class ControllerObj(object):
 
     def __init__(self, sensor, u_max=4, epsilonRand=0.4):
         self.Sensor = sensor
-        self.numRays = self.Sensor.numRays
         self.actionSet = np.array([u_max,0,-u_max])
         self.epsilonRand = epsilonRand
         self.actionSetIdx = np.arange(0,np.size(self.actionSet))
 
     def computeControlInput(self, state, t, frame, raycastDistance=None, randomize=False):
-        # test cases
-        # u = 0
-        # u = np.sin(t)
-        if raycastDistance is None:
-            self.distances = self.Sensor.raycastAll(frame)
-        else:
-            self.distances = raycastDistance
+        self.distances = raycastDistance
 
-        # #Barry 12 controller
-        
-
-        # u = self.countStuffController()
-        # u, actionIdx = self.countInverseDistancesController()
         u, actionIdx = self.supervisedDPController()
 
+        # TODO: Ask PETE - What does the randomization here achieve?
         if randomize:
             if np.random.uniform(0,1,1)[0] < self.epsilonRand:
                 # otherActionIdx = np.setdiff1d(self.actionSetIdx, np.array([actionIdx]))
@@ -35,12 +24,13 @@ class ControllerObj(object):
                 actionIdx = np.random.choice(self.actionSetIdx)
                 u = self.actionSet[actionIdx]
 
+        # TODO: Remove indexes if they aren't necessary
         return u, actionIdx
 
 
-    def countStuffController(self):
-        firstHalf = self.distances[0:self.numRays/2]
-        secondHalf = self.distances[self.numRays/2:]
+    def countStuffController(self, raycastDistance):
+        firstHalf = raycastDistance[0:self.Sensor.numRays/2]
+        secondHalf = raycastDistance[self.Sensor.numRays/2:]
         tol = 1e-3;
 
         numLeft = np.size(np.where(firstHalf < self.Sensor.rayLength - tol))
@@ -56,10 +46,10 @@ class ControllerObj(object):
         u = self.actionSet[actionIdx]
         return u, actionIdx
 
-    def countInverseDistancesController(self):
-        midpoint = np.floor(self.numRays/2.0)
-        leftHalf = np.array((self.distances[0:midpoint]))
-        rightHalf = np.array((self.distances[midpoint:]))
+    def countInverseDistancesController(self, raycastDistance):
+        midpoint = np.floor(self.Sensor.numRays/2.0)
+        leftHalf = np.array((raycastDistance[0:midpoint]))
+        rightHalf = np.array((raycastDistance[midpoint:]))
         tol = 1e-3;
 
         inverseLeftHalf = (1.0/leftHalf)**2
@@ -76,14 +66,6 @@ class ControllerObj(object):
         else:
             actionIdx = 0
 
-
-        # print "leftHalf ", leftHalf
-        # print "rightHalf", rightHalf
-        # print "inverseLeftHalf", inverseLeftHalf
-        # print "inverserRightHalf", inverseRightHalf
-        # print "numLeft", numLeft
-        # print "numRight", numRight
-
         u = self.actionSet[actionIdx]
         return u, actionIdx
 
@@ -97,9 +79,8 @@ class ControllerObj(object):
         
 
         w = np.array([-0.00300497, -0.00130277, -0.00148445, -0.00313336, -0.01317847, -0.02037713, -0.04797057, -0.09098885, -0.13847444, -0.11547472,  0.11733177,  0.13888244, 0.08363806,  0.04846861,  0.02326903,  0.01233246,  0.00382634,  0.00258145, 0.00284502,  0.00306195])
-        w = w[::-1]
 
-        u = np.dot(self.distances, w)
+        u = np.dot(self.distances, w[::-1])
 
         #if u > 4: u = 4
         #if u < -4: u = -4
@@ -111,5 +92,5 @@ class ControllerObj(object):
         carState = 0
         t = 0
         frame = om.findObjectByName('robot frame')
-        return self.computeControlInput(carState, t, frame)
+        return self.computeControlInput(carState, t, frame, self.Sensor.raycastAll(frame))
 

@@ -3,8 +3,6 @@ from CarSimulator import Simulator
 
 sim = Simulator(autoInitialize=False, verbose=False)
 
-sim.Sarsa_numInnerBins = 4
-sim.Sarsa_numOuterBins = 4
 sim.Sensor_rayLength = 10
 
 

@@ -1,27 +1,23 @@
-import director.vtkAll as vtk
-import director.visualization as vis
-import director.objectmodel as om
-from director.debugVis import DebugData
-from director.consoleapp import ConsoleApp
-from director.timercallback import TimerCallback
-from director import applogic
-from director import screengrabberpanel
-from director import cameracontrolpanel
-
-from director import transformUtils
-import numpy as np
-import time
-import scipy.integrate as integrate
 import argparse
-import matplotlib.pyplot as plt
+import numpy as np
 import shelve
+import time
 
+import director.objectmodel as om
+import director.visualization as vis
+import director.vtkAll as vtk
 from PythonQt import QtCore, QtGui
+from director import applogic
+from director import cameracontrolpanel
+from director import screengrabberpanel
+from director.consoleapp import ConsoleApp
+from director.debugVis import DebugData
+from director.timercallback import TimerCallback
 
-from world import World
 from car import CarPlant
-from sensor import SensorObj
 from controller import ControllerObj
+from sensor import SensorObj
+from world import World
 
 
 class Simulator(object):
