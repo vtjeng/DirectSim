@@ -74,6 +74,8 @@ class Simulator(object):
 
     def setDefaultOptions(self):
 
+        # TODO: Check with Pete what the point of this was
+
         defaultOptions = dict()
 
 
@@ -248,9 +250,6 @@ class Simulator(object):
             self.counter += 1
 
         return runData
-
-    def setNumpyRandomSeed(self, seed=1):
-        np.random.seed(seed)
 
     def runBatchSimulation(self, endTime=None, dt=0.05):
 
