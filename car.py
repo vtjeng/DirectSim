@@ -3,10 +3,12 @@ import scipy.integrate as integrate
 
 class CarPlant(object):
 
+
+    """
+    Specifies the dynamics of a Dubins Car with fixed velocity.
+    """
+
     def __init__(self, controller=None, velocity=12):
-        # if dt is None:
-        #     raise ValueError("must specify timestep dt when constructing CarPlant")
-        # initial state
         self.x = 0.0
         self.y = 0.0
         self.psi = 0.0
