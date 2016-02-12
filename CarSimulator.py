@@ -6,6 +6,7 @@ from director.consoleapp import ConsoleApp
 from director.timercallback import TimerCallback
 from director import applogic
 from director import screengrabberpanel
+from director import cameracontrolpanel
 
 from director import transformUtils
 import numpy as np
@@ -403,6 +404,8 @@ class Simulator(object):
         self.view.raise_()
         panel = screengrabberpanel.ScreenGrabberPanel(self.view)
         panel.widget.show()
+
+        cameracontrolpanel.CameraControlPanel(self.view).widget.show()
 
         elapsed = time.time() - self.startSimTime
         simRate = self.counter/elapsed

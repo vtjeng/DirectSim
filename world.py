@@ -306,9 +306,9 @@ class World(object):
         t.Scale(scale, scale, scale)
         polyData = filterUtils.transformPolyData(polyData, t)
 
-        #d = DebugData()
-        #d.addCone((x,y,0), (1,0,0), height=0.2, radius=0.1)
-        #polyData = d.getPolyData()
+        # d = DebugData()
+        # d.addCone((x,y,0), (1,0,0), height=0.2, radius=0.1)
+        # polyData = d.getPolyData()
 
         obj = vis.showPolyData(polyData, 'robot')
         robotFrame = vis.addChildFrame(obj)
