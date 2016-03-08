@@ -2,27 +2,18 @@ import numpy as np
 
 class ControllerObj(object):
 
-    def __init__(self, sensor, u_max=1, epsilonRand=0.4):
+    def __init__(self, sensor, u_max=1):
         self.Sensor = sensor
         self.u_max = u_max
         self.actionSet = np.array([u_max,0,-u_max])
-        self.epsilonRand = epsilonRand
         self.actionSetIdx = np.arange(0,np.size(self.actionSet))
 
         # TODO: split this controller up?
 
-    def computeControlInput(self, state, t, frame, raycastDistance=None, randomize=False):
+    def computeControlInput(self, state, t, frame, raycastDistance=None):
         self.distances = raycastDistance
 
         u, actionIdx = self.supervisedDPController()
-
-        # TODO: Ask PETE - What does the randomization here achieve?
-        if randomize:
-            if np.random.uniform(0,1,1)[0] < self.epsilonRand:
-                # otherActionIdx = np.setdiff1d(self.actionSetIdx, np.array([actionIdx]))
-                # randActionIdx = np.random.choice(otherActionIdx)
-                actionIdx = np.random.choice(self.actionSetIdx)
-                u = self.actionSet[actionIdx]
 
         # TODO: Remove indexes if they aren't necessary
         return u, actionIdx

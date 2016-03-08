@@ -201,8 +201,7 @@ class Simulator(object):
             if controllerType in ["default", "defaultRandom"]:
                 controlInput, controlInputIdx = self.Controller.computeControlInput(currentCarState,
                                                                             currentTime, self.frame,
-                                                                            raycastDistance=currentRaycast,
-                                                                            randomize=False)
+                                                                            raycastDistance=currentRaycast)
 
             self.controlInputData[idx] = controlInput
 
@@ -222,8 +221,7 @@ class Simulator(object):
             if controllerType in ["default", "defaultRandom"]:
                 nextControlInput, nextControlInputIdx = self.Controller.computeControlInput(nextCarState,
                                                                             currentTime, self.frame,
-                                                                            raycastDistance=nextRaycast,
-                                                                            randomize=False)
+                                                                            raycastDistance=nextRaycast)
 
 
             #bookkeeping
