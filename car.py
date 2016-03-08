@@ -9,13 +9,11 @@ class CarPlant(object):
     """
 
     def __init__(self, controller=None, velocity=12):
-        self.x = 0.0
-        self.y = 0.0
-        self.psi = 0.0
-      
-        rad = np.pi/180.0
+        x = 0.0
+        y = 0.0
+        psi = 0.0 * np.pi / 180.0
 
-        self.state = np.array([self.x, self.y, self.psi*rad])
+        self.state = np.array([x, y, psi])
 
         # constant velocity
         self.v = velocity
