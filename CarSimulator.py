@@ -15,7 +15,7 @@ from director.debugVis import DebugData
 from director.timercallback import TimerCallback
 
 from car import CarPlant
-from controller import ControllerObj
+from controller import *
 from sensor import SensorObj
 from world import World
 
@@ -129,7 +129,7 @@ class Simulator(object):
         self.Sensor = SensorObj(rayLength=self.options['Sensor']['rayLength'],
                                 numRays=self.options['Sensor']['numRays'])
 
-        self.Controller = ControllerObj(self.Sensor)
+        self.Controller = SupervisedCubicController(self.Sensor, u_max=4)
 
         self.Car = CarPlant(controller=self.Controller,
                             velocity=self.options['Car']['velocity'])
@@ -199,7 +199,7 @@ class Simulator(object):
 
 
             if controllerType in ["default", "defaultRandom"]:
-                controlInput = self.Controller.computeControlInput(raycastDistance=currentRaycast)
+                controlInput = self.Controller.compute_u(raycastDistance=currentRaycast)
 
             self.controlInputData[idx] = controlInput
 
@@ -217,7 +217,7 @@ class Simulator(object):
             S_next = (nextCarState, nextRaycast)
 
             if controllerType in ["default", "defaultRandom"]:
-                nextControlInput = self.Controller.computeControlInput(raycastDistance=nextRaycast)
+                nextControlInput = self.Controller.compute_u(raycastDistance=nextRaycast)
 
 
             #bookkeeping
