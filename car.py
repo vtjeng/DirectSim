@@ -52,14 +52,6 @@ class CarPlant(object):
     def setCarState(self, x, y, theta):
         self.state = np.array([x, y, theta])
 
-    # TODO: Check with Pete to see if this is used anywhere.
-    def simulate(self, dt=0.05):
-        t = np.arange(0.0, 10, dt)
-        newState = integrate.odeint(self.dynamics, self.state, t)
-        print "Finished simulation:", newState
-        print "Shape is", np.shape(newState)
-        return newState
-
     def simulateOneStep(self, startTime=0.0, dt=0.05, controlInput=None):
         t = np.linspace(startTime, startTime+dt, 2)
         newState = integrate.odeint(self.dynamics, self.state, t, args=(controlInput,))

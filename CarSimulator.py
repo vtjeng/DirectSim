@@ -474,8 +474,6 @@ class Simulator(object):
             return False
 
     def tick(self):
-        #print timer.elapsed
-        #simulate(t.elapsed)
         x = np.sin(time.time())
         y = np.cos(time.time())
         self.setRobotFrameState(x,y,0.0)
