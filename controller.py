@@ -5,17 +5,19 @@ import director.objectmodel as om
 
 class ControllerObj(object):
 
-    def __init__(self, sensor, u_max=4, epsilonRand=0.4):
+    def __init__(self, sensor, u_max=1, epsilonRand=0.4):
         self.Sensor = sensor
         self.u_max = u_max
         self.actionSet = np.array([u_max,0,-u_max])
         self.epsilonRand = epsilonRand
         self.actionSetIdx = np.arange(0,np.size(self.actionSet))
 
+        # TODO: split this controller up?
+
     def computeControlInput(self, state, t, frame, raycastDistance=None, randomize=False):
         self.distances = raycastDistance
 
-        u, actionIdx = self.supervisedDPController()
+        u, actionIdx = self.supervisedDPControllerCubic()
 
         # TODO: Ask PETE - What does the randomization here achieve?
         if randomize:
@@ -79,9 +81,22 @@ class ControllerObj(object):
         #w = [-0.02109653, -0.01746332, -0.02388135, -0.0314405,  -0.04294771, -0.05559809, -0.07757404, -0.08611176, -0.07874338, -0.04490507,  0.04384566,  0.08218653, 0.08214135,  0.08184778,  0.05594081,  0.04173576,  0.03131204,  0.02372157, 0.01681253,  0.02070505]
         
         # we're reversing the w array because of the vagaries of the ML.
-        w = np.array([-0.00300497, -0.00130277, -0.00148445, -0.00313336, -0.01317847, -0.02037713, -0.04797057, -0.09098885, -0.13847444, -0.11547472,  0.11733177,  0.13888244, 0.08363806,  0.04846861,  0.02326903,  0.01233246,  0.00382634,  0.00258145, 0.00284502,  0.00306195])
+        w = np.array([-0.01457873, -0.01027499, -0.01612163, -0.02389832, -0.03228708, -0.04974498, -0.07291344, -0.09525306, -0.07906981, -0.03315874, 0.03480734, 0.07656544, 0.09687568, 0.07201174, 0.04925396, 0.03240909, 0.026072, 0.0173852, 0.01189639, 0.01622941])
 
         u_desired = np.dot(self.distances, w[::-1])
+
+        if u_desired > self.u_max:
+            return self.u_max, 0
+        elif u_desired < -self.u_max:
+            return -self.u_max, 0
+        else:
+            return u_desired, 0
+
+    def supervisedDPControllerCubic(self):
+        # we're reversing the w array because of the vagaries of the ML.
+        w = np.array([-0.00035671, -0.00035193, -0.00053087, -0.00084506, -0.00121055, -0.00183538, -0.0026913, -0.00332851, -0.00267597, -0.00112497, 0.00112066, 0.00260913, 0.00343951, 0.00269573, 0.001834, 0.00120245, 0.00089366, 0.00056788, 0.00036757, 0.00038036])
+
+        u_desired = np.dot(self.distances**3, w[::-1])
 
         if u_desired > self.u_max:
             return self.u_max, 0
