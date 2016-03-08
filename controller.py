@@ -17,7 +17,7 @@ class ControllerObj(object):
     def computeControlInput(self, state, t, frame, raycastDistance=None, randomize=False):
         self.distances = raycastDistance
 
-        u, actionIdx = self.supervisedDPControllerCubic()
+        u, actionIdx = self.supervisedDPController()
 
         # TODO: Ask PETE - What does the randomization here achieve?
         if randomize:
