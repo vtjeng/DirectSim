@@ -23,7 +23,7 @@ class CarPlant(object):
         if control_input is not None:
             u = control_input
         else:
-            u = self.Controller.computeControlInput()
+            u = self.Controller.compute_u()
 
         dqdt = np.zeros_like(state)
         dqdt[0] = self.v*np.cos(state[2])
