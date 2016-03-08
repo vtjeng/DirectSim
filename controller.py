@@ -10,13 +10,10 @@ class ControllerObj(object):
 
         # TODO: split this controller up?
 
-    def computeControlInput(self, state, t, frame, raycastDistance=None):
+    def computeControlInput(self, raycastDistance=None):
         self.distances = raycastDistance
 
-        u, actionIdx = self.supervisedDPController()
-
-        # TODO: Remove indexes if they aren't necessary
-        return u, actionIdx
+        return self.supervisedDPController()
 
 
     def countStuffController(self, raycastDistance):
@@ -35,7 +32,7 @@ class ControllerObj(object):
             actionIdx = 0
 
         u = self.actionSet[actionIdx]
-        return u, actionIdx
+        return u
 
     def countInverseDistancesController(self, raycastDistance):
         midpoint = np.floor(self.Sensor.numRays/2.0)
@@ -58,7 +55,7 @@ class ControllerObj(object):
             actionIdx = 0
 
         u = self.actionSet[actionIdx]
-        return u, actionIdx
+        return u
 
     def supervisedDPController(self):
 
@@ -74,11 +71,11 @@ class ControllerObj(object):
         u_desired = np.dot(self.distances, w[::-1])
 
         if u_desired > self.u_max:
-            return self.u_max, 0
+            return self.u_max
         elif u_desired < -self.u_max:
-            return -self.u_max, 0
+            return -self.u_max
         else:
-            return u_desired, 0
+            return u_desired
 
     def supervisedDPControllerCubic(self):
         # we're reversing the w array because of the vagaries of the ML.
@@ -87,9 +84,9 @@ class ControllerObj(object):
         u_desired = np.dot(self.distances**3, w[::-1])
 
         if u_desired > self.u_max:
-            return self.u_max, 0
+            return self.u_max
         elif u_desired < -self.u_max:
-            return -self.u_max, 0
+            return -self.u_max
         else:
-            return u_desired, 0
+            return u_desired
 
