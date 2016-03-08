@@ -6,7 +6,7 @@ from director.debugVis import DebugData
 
 import numpy as np
 
-from PythonQt import QtCore, QtGui
+# TODO: Talk to Pete about how I can expand the world and do different things with it.
 
 class World(object):
 

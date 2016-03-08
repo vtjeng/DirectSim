@@ -19,8 +19,8 @@ class AbstractController(object):
     def cap_u(self, u_desired):
         """
         Ensures that the maximum control input is no larger than the maximum allowed.
-        :param u_desired:
-        :return: value of u capped to u_max.
+        :param u_desired: Value of u that we want the controller input to be.
+        :return: value of u_desired capped to u_max.
         """
         if u_desired > self.u_max:
             return self.u_max

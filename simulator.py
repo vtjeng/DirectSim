@@ -14,7 +14,7 @@ from director.consoleapp import ConsoleApp
 from director.debugVis import DebugData
 from director.timercallback import TimerCallback
 
-from car import CarPlant
+from carPlant import CarPlant
 from controller import *
 from sensor import SensorObj
 from world import World
