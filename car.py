@@ -32,8 +32,8 @@ class CarPlant(object):
     
         return dqdt
 
-    def set_car_state(self, x, y, theta):
-        self.state = np.array([x, y, theta])
+    def set_car_state(self, state):
+        self.state = state
 
     def simulate_one_step(self, start_time=0.0, dt=0.05, control_input=None):
         """

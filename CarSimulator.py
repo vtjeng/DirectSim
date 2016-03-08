@@ -168,10 +168,8 @@ class Simulator(object):
         self.setRandomCollisionFreeInitialState()
 
         currentCarState = np.copy(self.Car.state)
-        nextCarState = np.copy(self.Car.state)
-        self.setRobotFrameState(currentCarState[0], currentCarState[1], currentCarState[2])
+        self.setRobotFrameState(currentCarState)
         currentRaycast = self.Sensor.raycastAll(self.frame)
-        nextRaycast = np.zeros(self.Sensor.numRays)
 
         # record the reward data
         runData = dict()
@@ -182,11 +180,7 @@ class Simulator(object):
             idx = self.counter
             currentTime = self.t[idx]
             self.stateOverTime[idx,:] = currentCarState
-            x = self.stateOverTime[idx,0]
-            y = self.stateOverTime[idx,1]
-            theta = self.stateOverTime[idx,2]
-            self.setRobotFrameState(x,y,theta)
-            # self.setRobotState(currentCarState[0], currentCarState[1], currentCarState[2])
+            self.setRobotFrameState(currentCarState)
             currentRaycast = self.Sensor.raycastAll(self.frame)
             self.raycastData[idx,:] = currentRaycast
             S_current = (currentCarState, currentRaycast)
@@ -205,10 +199,7 @@ class Simulator(object):
             nextCarState = self.Car.simulate_one_step(control_input=controlInput, dt=self.dt)
 
             # want to compute nextRaycast so we can do the SARSA algorithm
-            x = nextCarState[0]
-            y = nextCarState[1]
-            theta = nextCarState[2]
-            self.setRobotFrameState(x,y,theta)
+            self.setRobotFrameState(nextCarState)
             nextRaycast = self.Sensor.raycastAll(self.frame)
 
 
@@ -323,9 +314,11 @@ class Simulator(object):
             x = 0.0
             y =   -5.0
             theta = 0 #+ np.random.uniform(0,2*np.pi,1)[0] * 0.01
-            
-            self.Car.set_car_state(x, y, theta)
-            self.setRobotFrameState(x,y,theta)
+
+            state = np.array([x, y, theta])
+
+            self.Car.set_car_state(state)
+            self.setRobotFrameState(state)
 
             print "In loop"
 
@@ -344,8 +337,10 @@ class Simulator(object):
             y = np.random.uniform(self.world.Ymin+tol, self.world.Ymax-tol, 1)[0]
             theta = np.random.uniform(0,2*np.pi,1)[0]
             
-            self.Car.set_car_state(x, y, theta)
-            self.setRobotFrameState(x,y,theta)
+            state = np.array([x, y, theta])
+
+            self.Car.set_car_state(state)
+            self.setRobotFrameState(state)
 
             if not self.checkInCollision():
                 break
@@ -442,7 +437,8 @@ class Simulator(object):
 
         return name
 
-    def setRobotFrameState(self, x, y, theta):
+    def setRobotFrameState(self, q):
+        (x, y, theta) = q
         t = vtk.vtkTransform()
         t.Translate(x,y,0.0)
         t.RotateZ(np.degrees(theta))
@@ -455,7 +451,7 @@ class Simulator(object):
         :return: True if we are in collision, and false otherwise.
         """
         if raycastDistance is None:
-            self.setRobotFrameState(self.Car.state[0],self.Car.state[1],self.Car.state[2])
+            self.setRobotFrameState(self.Car.state)
             raycastDistance = self.Sensor.raycastAll(self.frame)
 
         if np.min(raycastDistance) < self.collisionThreshold:
@@ -466,7 +462,9 @@ class Simulator(object):
     def tick(self):
         x = np.sin(time.time())
         y = np.cos(time.time())
-        self.setRobotFrameState(x,y,0.0)
+        state = np.array([x, y, 0.0])
+
+        self.setRobotFrameState(state)
         if (time.time() - self.playTime) > self.endTime:
             self.playTimer.stop()
 
@@ -486,8 +484,7 @@ class Simulator(object):
         numSteps = len(self.stateOverTime)
         idx = int(np.floor(numSteps*(1.0*value/self.sliderMax)))
         idx = min(idx, numSteps-1)
-        x,y,theta = self.stateOverTime[idx]
-        self.setRobotFrameState(x,y,theta)
+        self.setRobotFrameState(self.stateOverTime[idx])
         self.sliderMovedByPlayTimer = False
 
     def onPlayButton(self):
