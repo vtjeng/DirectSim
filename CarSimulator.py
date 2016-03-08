@@ -306,28 +306,6 @@ class Simulator(object):
             print "#" * self.nextTickIdx, "-" * (self.numTicks - self.nextTickIdx), "estimated", estimatedTimeLeft_minutes, "minutes left"
 
 
-    def setCollisionFreeInitialState(self):
-        tol = 5
-
-        while True:
-            
-            x = 0.0
-            y =   -5.0
-            theta = 0 #+ np.random.uniform(0,2*np.pi,1)[0] * 0.01
-
-            state = np.array([x, y, theta])
-
-            self.Car.set_car_state(state)
-            self.setRobotFrameState(state)
-
-            print "In loop"
-
-            if not self.checkInCollision():
-                break
-                
-        return x,y,theta
-
-
     def setRandomCollisionFreeInitialState(self):
         tol = 5
 
@@ -345,7 +323,7 @@ class Simulator(object):
             if not self.checkInCollision():
                 break
 
-        return x,y,theta
+        return state
 
     def setupPlayback(self):
 
@@ -545,7 +523,6 @@ class Simulator(object):
 
 
 if __name__ == "__main__":
-    # main(sys.argv[1:])
     parser = argparse.ArgumentParser(description='interpret simulation parameters')
     parser.add_argument('--percentObsDensity', type=float, nargs=1, default=[10])
     parser.add_argument('--endTime', type=int, nargs=1, default=[40])
