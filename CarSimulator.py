@@ -159,7 +159,6 @@ class Simulator(object):
 
         self.defaultControllerTime = self.options['runTime']['defaultControllerTime']
 
-        self.Car.setFrame(self.frame)
         print "Finished initialization"
 
 

@@ -34,9 +34,6 @@ class CarPlant(object):
     
         return dqdt
 
-    def setFrame(self, frame):
-        self.frame = frame
-
     def setCarState(self, x, y, theta):
         self.state = np.array([x, y, theta])
 
