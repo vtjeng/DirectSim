@@ -202,7 +202,7 @@ class Simulator(object):
 
             self.controlInputData[idx] = controlInput
 
-            nextCarState = self.Car.simulateOneStep(controlInput=controlInput, dt=self.dt)
+            nextCarState = self.Car.simulate_one_step(control_input=controlInput, dt=self.dt)
 
             # want to compute nextRaycast so we can do the SARSA algorithm
             x = nextCarState[0]
@@ -324,7 +324,7 @@ class Simulator(object):
             y =   -5.0
             theta = 0 #+ np.random.uniform(0,2*np.pi,1)[0] * 0.01
             
-            self.Car.setCarState(x,y,theta)
+            self.Car.set_car_state(x, y, theta)
             self.setRobotFrameState(x,y,theta)
 
             print "In loop"
@@ -344,7 +344,7 @@ class Simulator(object):
             y = np.random.uniform(self.world.Ymin+tol, self.world.Ymax-tol, 1)[0]
             theta = np.random.uniform(0,2*np.pi,1)[0]
             
-            self.Car.setCarState(x,y,theta)
+            self.Car.set_car_state(x, y, theta)
             self.setRobotFrameState(x,y,theta)
 
             if not self.checkInCollision():
