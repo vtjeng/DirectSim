@@ -8,7 +8,7 @@ class CarPlant(object):
     Specifies the dynamics of a Dubins Car with fixed velocity.
     """
 
-    def __init__(self, controller=None, velocity=12):
+    def __init__(self, controller, velocity=12):
         x = 0.0
         y = 0.0
         psi = 0.0 * np.pi / 180.0
@@ -23,17 +23,12 @@ class CarPlant(object):
 
     def dynamics(self, state, t, controlInput=None):
 
-        dqdt = np.zeros_like(state)
-
         if controlInput is not None:
             u = controlInput
         else:
-            # need to calculate from controller
-            if self.Controller is None:
-                u = np.sin(t)
-            else:
-                u = self.Controller.computeControlInput(state, t, self.frame)
+            u = self.Controller.computeControlInput(state, t, self.frame)
 
+        dqdt = np.zeros_like(state)
         dqdt[0] = self.v*np.cos(state[2])
         dqdt[1] = self.v*np.sin(state[2])
         dqdt[2] = u # we are directly controlling yaw rate
