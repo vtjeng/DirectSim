@@ -5,7 +5,7 @@ class CarPlant(object):
 
 
     """
-    Specifies the dynamics of a Dubins Car with fixed velocity.
+    Specifies the behaviour of a Dubins Car.
     """
 
     def __init__(self, controller, velocity=12):
@@ -15,7 +15,6 @@ class CarPlant(object):
 
         self.state = np.array([x, y, psi])
 
-        # constant velocity
         self.v = velocity
 
         self.Controller = controller
