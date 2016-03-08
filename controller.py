@@ -1,7 +1,4 @@
 import numpy as np
-import scipy.integrate as integrate
-import director.objectmodel as om
-
 
 class ControllerObj(object):
 
@@ -104,11 +101,4 @@ class ControllerObj(object):
             return -self.u_max, 0
         else:
             return u_desired, 0
-
-
-    def computeControlInputFromFrame(self):
-        carState = 0
-        t = 0
-        frame = om.findObjectByName('robot frame')
-        return self.computeControlInput(carState, t, frame, self.Sensor.raycastAll(frame))
 
