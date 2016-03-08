@@ -45,10 +45,6 @@ class CarPlant(object):
     def setFrame(self, frame):
         self.frame = frame
 
-    def setStateFromFrame(self, frame):
-         # get roll, pitch, yaw from the frame, set the state to that . . .
-         pass
-
     def setCarState(self, x, y, theta):
         self.state = np.array([x, y, theta])
 
