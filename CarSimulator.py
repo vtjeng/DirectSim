@@ -405,7 +405,6 @@ class Simulator(object):
     def run(self, launchApp=True):
         self.counter = 1
         self.runBatchSimulation()
-        # self.Sarsa.plotWeights()
 
         if launchApp:
             self.setupPlayback()
@@ -434,11 +433,6 @@ class Simulator(object):
 
         vis.updatePolyData(d.getPolyData(), 'rays', colorByName='RGB255')
 
-        #camera = self.view.camera()
-        #camera.SetFocalPoint(frame.transform.GetPosition())
-        #camera.SetPosition(frame.transform.TransformPoint((-30,0,10)))
-
-
     def getControllerTypeFromCounter(self, counter):
         name = self.controllerTypeOrder[0]
 
@@ -448,15 +442,18 @@ class Simulator(object):
 
         return name
 
-
     def setRobotFrameState(self, x, y, theta):
         t = vtk.vtkTransform()
         t.Translate(x,y,0.0)
         t.RotateZ(np.degrees(theta))
         self.robot.getChildFrame().copyFrame(t)
 
-    # returns true if we are in collision
     def checkInCollision(self, raycastDistance=None):
+        """
+
+        :param raycastDistance:
+        :return: True if we are in collision, and false otherwise.
+        """
         if raycastDistance is None:
             self.setRobotFrameState(self.Car.state[0],self.Car.state[1],self.Car.state[2])
             raycastDistance = self.Sensor.raycastAll(self.frame)
@@ -472,13 +469,6 @@ class Simulator(object):
         self.setRobotFrameState(x,y,0.0)
         if (time.time() - self.playTime) > self.endTime:
             self.playTimer.stop()
-
-    def tick2(self):
-        newtime = time.time() - self.playTime
-        print time.time() - self.playTime
-        x = np.sin(newtime)
-        y = np.cos(newtime)
-        self.setRobotFrameState(x,y,0.0)
 
     # just increment the slider, stop the timer if we get to the end
     def playTimerCallback(self):
