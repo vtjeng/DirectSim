@@ -126,8 +126,8 @@ class Simulator(object):
 
         self.setDefaultOptions()
 
-        self.Sensor = SensorObj(rayLength=self.options['Sensor']['rayLength'],
-                                numRays=self.options['Sensor']['numRays'])
+        self.Sensor = SensorObj(num_rays=self.options['Sensor']['numRays'],
+                                ray_length=self.options['Sensor']['rayLength'])
 
         self.Controller = SupervisedCubicController(self.Sensor, u_max=4)
 
@@ -169,7 +169,7 @@ class Simulator(object):
 
         currentCarState = np.copy(self.Car.state)
         self.setRobotFrameState(currentCarState)
-        currentRaycast = self.Sensor.raycastAll(self.frame)
+        currentRaycast = self.Sensor.raycast_all(self.frame)
 
         # record the reward data
         runData = dict()
@@ -180,7 +180,7 @@ class Simulator(object):
             idx = self.counter
             self.stateOverTime[idx,:] = currentCarState
             self.setRobotFrameState(currentCarState)
-            currentRaycast = self.Sensor.raycastAll(self.frame)
+            currentRaycast = self.Sensor.raycast_all(self.frame)
             self.raycastData[idx,:] = currentRaycast
 
 
@@ -191,7 +191,7 @@ class Simulator(object):
 
             # want to compute nextRaycast so we can do the SARSA algorithm
             self.setRobotFrameState(nextCarState)
-            nextRaycast = self.Sensor.raycastAll(self.frame)
+            nextRaycast = self.Sensor.raycast_all(self.frame)
 
             #bookkeeping
             currentCarState = nextCarState
@@ -413,7 +413,7 @@ class Simulator(object):
         """
         if raycast_distances is None:
             self.setRobotFrameState(self.Car.state)
-            raycast_distances = self.Sensor.raycastAll(self.frame)
+            raycast_distances = self.Sensor.raycast_all(self.frame)
 
         return np.min(raycast_distances) < self.collisionThreshold
 

@@ -5,11 +5,11 @@ import numpy as np
 
 class SensorObj(object):
 
-    def __init__(self, FOV=180.0, numRays=20, rayLength=8):
-        self.numRays = numRays
-        self.rayLength = rayLength
+    def __init__(self, num_rays=20, ray_length=8, fov=180.0):
+        self.numRays = num_rays
+        self.rayLength = ray_length
 
-        FOVrad = FOV * np.pi/180.0
+        FOVrad = fov * np.pi / 180.0
         self.angleMin = -FOVrad/2
         self.angleMax = FOVrad/2
 
@@ -19,10 +19,11 @@ class SensorObj(object):
         self.rays[0,:] = np.cos(self.angleGrid)
         self.rays[1,:] = -np.sin(self.angleGrid)
 
+    # TODO: ask pete what a locator is.
     def setLocator(self, locator):
         self.locator = locator
 
-    def raycastAll(self,frame):
+    def raycast_all(self, frame):
 
         distances = np.zeros(self.numRays)
 
@@ -39,7 +40,7 @@ class SensorObj(object):
 
         return distances
 
-    def raycast(self, locator, rayOrigin, rayEnd):
+    def raycast(self, locator, ray_origin, ray_end):
 
         tolerance = 0.0 # intersection tolerance
         pt = [0.0, 0.0, 0.0] # data coordinate where intersection occurs
@@ -47,6 +48,6 @@ class SensorObj(object):
         pcoords = [0.0, 0.0, 0.0] # parametric location within cell (triangle) where intersection occurs
         subId = vtk.mutable(0) # sub id of cell intersection
 
-        result = locator.IntersectWithLine(rayOrigin, rayEnd, tolerance, lineT, pt, pcoords, subId)
+        result = locator.IntersectWithLine(ray_origin, ray_end, tolerance, lineT, pt, pcoords, subId)
 
         return pt if result else None
