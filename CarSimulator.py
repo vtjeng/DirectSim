@@ -178,22 +178,13 @@ class Simulator(object):
 
         while (self.counter < self.numTimesteps - 1):
             idx = self.counter
-            currentTime = self.t[idx]
             self.stateOverTime[idx,:] = currentCarState
             self.setRobotFrameState(currentCarState)
             currentRaycast = self.Sensor.raycastAll(self.frame)
             self.raycastData[idx,:] = currentRaycast
-            S_current = (currentCarState, currentRaycast)
 
 
-            if controllerType not in self.colorMap.keys():
-                print
-                raise ValueError("controller of type " + controllerType + " not supported")
-
-
-            if controllerType in ["default", "defaultRandom"]:
-                controlInput = self.Controller.compute_u(raycastDistance=currentRaycast)
-
+            controlInput = self.Controller.compute_u(raycastDistance=currentRaycast)
             self.controlInputData[idx] = controlInput
 
             nextCarState = self.Car.simulate_one_step(control_input=controlInput, dt=self.dt)
@@ -201,14 +192,6 @@ class Simulator(object):
             # want to compute nextRaycast so we can do the SARSA algorithm
             self.setRobotFrameState(nextCarState)
             nextRaycast = self.Sensor.raycastAll(self.frame)
-
-
-            # Compute the next control input
-            S_next = (nextCarState, nextRaycast)
-
-            if controllerType in ["default", "defaultRandom"]:
-                nextControlInput = self.Controller.compute_u(raycastDistance=nextRaycast)
-
 
             #bookkeeping
             currentCarState = nextCarState
@@ -422,21 +405,19 @@ class Simulator(object):
         t.RotateZ(np.degrees(theta))
         self.robot.getChildFrame().copyFrame(t)
 
-    def checkInCollision(self, raycastDistance=None):
+    def checkInCollision(self, raycast_distances=None):
         """
 
-        :param raycastDistance:
+        :param raycast_distances:
         :return: True if we are in collision, and false otherwise.
         """
-        if raycastDistance is None:
+        if raycast_distances is None:
             self.setRobotFrameState(self.Car.state)
-            raycastDistance = self.Sensor.raycastAll(self.frame)
+            raycast_distances = self.Sensor.raycastAll(self.frame)
 
-        if np.min(raycastDistance) < self.collisionThreshold:
-            return True
-        else:
-            return False
+        return np.min(raycast_distances) < self.collisionThreshold
 
+    # TODO: Ask Pete what the purpose of tick is
     def tick(self):
         x = np.sin(time.time())
         y = np.cos(time.time())
@@ -479,6 +460,7 @@ class Simulator(object):
         print 'pause'
         self.playTimer.stop()
 
+    # TODO: Ask Pete how all these save to file things work.
     def saveToFile(self, filename):
 
         # should also save the run data if it is available, i.e. stateOverTime, rewardOverTime
