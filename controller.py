@@ -1,5 +1,6 @@
 import numpy as np
 from abc import ABCMeta, abstractmethod
+import scipy
 
 
 class AbstractController(object):
@@ -29,19 +30,33 @@ class AbstractController(object):
         else:
             return u_desired
 
-
-class SupervisedCubicController(AbstractController):
+class CubicObjectiveController(AbstractController):
     def compute_desired_u(self, raycast_distances):
-        w = np.array([-0.00035671, -0.00035193, -0.00053087, -0.00084506, -0.00121055, -0.00183538, -0.0026913, -0.00332851, -0.00267597, -0.00112497, 0.00112066, 0.00260913, 0.00343951, 0.00269573, 0.001834, 0.00120245, 0.00089366, 0.00056788, 0.00036757, 0.00038036])
+        w = [-0.12933211, -0.1168573, -0.18053814, -0.29548549, -0.43497715, -0.64520728, -0.93109957, -1.14716128, -1.19673222, -0.62145319, 0.61387357, 1.24814345, 1.16823557, 0.89885198, 0.64761157, 0.430246, 0.28741517, 0.17543379, 0.10411869, 0.13474329]
+        u_desired = scipy.special.cbrt(np.dot(raycast_distances-self.Sensor.rayLength, w[::-1]))
+
+        return u_desired
+
+class WeightedCubicController(AbstractController):
+    def compute_desired_u(self, raycast_distances):
+        w = [-4.24024293e-05, -3.77577800e-05, -5.34051110e-05, -7.41927314e-05, -9.60329416e-05, -1.23734453e-04, -1.52172207e-04, -1.68049979e-04, -1.53122692e-04, -7.81028953e-05, 7.78999539e-05, 1.60691575e-04, 1.69868410e-04, 1.49521025e-04, 1.23502801e-04, 9.54336362e-05, 7.24562315e-05, 5.20114028e-05, 3.56561843e-05, 4.38290345e-05]
         u_desired = np.dot(raycast_distances**3, w[::-1])
 
         return u_desired
 
 
-class SupervisedLinearController(AbstractController):
+class LinearController(AbstractController):
     def compute_desired_u(self, raycast_distances):
-        w = np.array([-0.01457873, -0.01027499, -0.01612163, -0.02389832, -0.03228708, -0.04974498, -0.07291344, -0.09525306, -0.07906981, -0.03315874, 0.03480734, 0.07656544, 0.09687568, 0.07201174, 0.04925396, 0.03240909, 0.026072, 0.0173852, 0.01189639, 0.01622941])
+        w = [-0.01958262, -0.01414781, -0.0206654, -0.02948661, -0.03923019, -0.05285479, -0.06993342, -0.08271239, -0.0818335, -0.04416196, 0.04344241, 0.08568999, 0.08388192, 0.06810941, 0.05335488, 0.03873115, 0.02870925, 0.02036616, 0.01365856, 0.02027503]
         u_desired = np.dot(raycast_distances, w[::-1])
+
+        return u_desired
+
+class WeightedLinearController(AbstractController):
+    def compute_desired_u(self, raycast_distances):
+        aggression = 2.0
+        w = [-0.02414684, -0.01669008, -0.02398767, -0.03327088, -0.04176279, -0.05485901, -0.07101605, -0.08306437, -0.08194158, -0.0424285, 0.04179754, 0.08612401, 0.08435971, 0.0685426, 0.05522676, 0.04182127, 0.03236405, 0.02317769, 0.01571788, 0.02476362]
+        u_desired = aggression * np.dot(raycast_distances, w[::-1])
 
         return u_desired
 

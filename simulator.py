@@ -27,7 +27,7 @@ class Simulator(object):
                  circleRadius=0.7, worldScale=1.0, autoInitialize=True, verbose=True):
         self.verbose = verbose
         self.startSimTime = time.time()
-        self.collisionThreshold = 1.3
+        self.collisionThreshold = 0.7
         self.randomSeed = 5
         self.Sensor_rayLength = 8
 
@@ -51,15 +51,15 @@ class Simulator(object):
         self.options = dict()
 
         self.options['World'] = dict()
-        self.options['World']['obstaclesInnerFraction'] = 0.85
+        self.options['World']['obstaclesInnerFraction'] = 0.99
         self.options['World']['randomSeed'] = 40
-        self.options['World']['percentObsDensity'] = 7.5
+        self.options['World']['percentObsDensity'] = 20
         self.options['World']['nonRandomWorld'] = True
         self.options['World']['circleRadius'] = 1.0
         self.options['World']['scale'] = 10.0
 
         self.options['Sensor'] = dict()
-        self.options['Sensor']['rayLength'] = 10
+        self.options['Sensor']['rayLength'] = 20
         self.options['Sensor']['numRays'] = 20
 
 
@@ -80,16 +80,15 @@ class Simulator(object):
 
 
         defaultOptions['World'] = dict()
-        defaultOptions['World']['obstaclesInnerFraction'] = 0.85
         defaultOptions['World']['randomSeed'] = 40
-        defaultOptions['World']['percentObsDensity'] = 7.5
+        defaultOptions['World']['percentObsDensity'] = 20
         defaultOptions['World']['nonRandomWorld'] = True
-        defaultOptions['World']['circleRadius'] = 1.75
+        defaultOptions['World']['circleRadius'] = 1.0
         defaultOptions['World']['scale'] = 10.0
 
 
         defaultOptions['Sensor'] = dict()
-        defaultOptions['Sensor']['rayLength'] = 10
+        defaultOptions['Sensor']['rayLength'] = 20
         defaultOptions['Sensor']['numRays'] = 20
 
 
@@ -129,7 +128,7 @@ class Simulator(object):
         self.Sensor = SensorObj(num_rays=self.options['Sensor']['numRays'],
                                 ray_length=self.options['Sensor']['rayLength'])
 
-        self.Controller = SupervisedCubicController(self.Sensor, u_max=4)
+        self.Controller = CubicObjectiveController(self.Sensor, u_max=4)
 
         self.Car = CarPlant(controller=self.Controller,
                             velocity=self.options['Car']['velocity'])
