@@ -18,101 +18,54 @@ from carPlant import CarPlant
 from controller import *
 from sensor import SensorObj
 from world import World
-
+from bunch import *
 
 class Simulator(object):
 
 
-    def __init__(self, percentObsDensity=20, endTime=40, nonRandomWorld=False,
-                 circleRadius=0.7, worldScale=1.0, autoInitialize=True, verbose=True):
+    def __init__(self, endTime=40, options = None, verbose=True):
+
         self.verbose = verbose
         self.startSimTime = time.time()
         self.collisionThreshold = 0.7
-        self.randomSeed = 5
-        self.Sensor_rayLength = 8
-
-        self.percentObsDensity = percentObsDensity
-        self.defaultControllerTime = 1000
-        self.nonRandomWorld = nonRandomWorld
-        self.circleRadius = circleRadius
-        self.worldScale = worldScale
 
         # create the visualizer object
         self.app = ConsoleApp()
         self.view = self.app.createView(useGrid=False)
 
-        self.initializeOptions()
+        if options != None:
+            self.options = options
+        else:
+            self.options = Simulator.getDefaultOptions()
+
         self.initializeColorMap()
-        
-        if autoInitialize:
-            self.initialize()
 
-    def initializeOptions(self):
-        self.options = dict()
+    @staticmethod
+    def getDefaultOptions():
 
-        self.options['World'] = dict()
-        self.options['World']['obstaclesInnerFraction'] = 0.99
-        self.options['World']['randomSeed'] = 40
-        self.options['World']['percentObsDensity'] = 20
-        self.options['World']['nonRandomWorld'] = True
-        self.options['World']['circleRadius'] = 1.0
-        self.options['World']['scale'] = 10.0
+        options = Bunch()
 
-        self.options['Sensor'] = dict()
-        self.options['Sensor']['rayLength'] = 20
-        self.options['Sensor']['numRays'] = 20
+        options.World = Bunch()
+        options.World.obstaclesInnerFraction = 0.99
+        options.World.randomSeed = 40
+        options.World.percentObsDensity = 20
+        options.World.nonRandomWorld = True
+        options.World.circleRadius = 1.0
+        options.World.scale = 10.0
 
+        options.Sensor = Bunch()
+        options.Sensor.rayLength = 20
+        options.Sensor.numRays = 20
 
-        self.options['Car'] = dict()
-        self.options['Car']['velocity'] = 16
+        options.Car = Bunch()
+        options.Car.velocity = 16
 
-        self.options['dt'] = 0.05
+        options.dt = 0.05
 
-        self.options['runTime'] = dict()
-        self.options['runTime']['defaultControllerTime'] = 100
+        options.runTime = Bunch()
+        options.runTime.defaultControllerTime = 100
 
-
-    def setDefaultOptions(self):
-
-        # TODO: Check with Pete what the point of this was
-
-        defaultOptions = dict()
-
-
-        defaultOptions['World'] = dict()
-        defaultOptions['World']['randomSeed'] = 40
-        defaultOptions['World']['percentObsDensity'] = 20
-        defaultOptions['World']['nonRandomWorld'] = True
-        defaultOptions['World']['circleRadius'] = 1.0
-        defaultOptions['World']['scale'] = 10.0
-
-
-        defaultOptions['Sensor'] = dict()
-        defaultOptions['Sensor']['rayLength'] = 20
-        defaultOptions['Sensor']['numRays'] = 20
-
-
-        defaultOptions['Car'] = dict()
-        defaultOptions['Car']['velocity'] = 16
-
-        defaultOptions['dt'] = 0.05
-
-
-        defaultOptions['runTime'] = dict()
-        defaultOptions['runTime']['defaultControllerTime'] = 100
-
-
-        for k in defaultOptions:
-            self.options.setdefault(k, defaultOptions[k])
-
-
-        for k in defaultOptions:
-            if not isinstance(defaultOptions[k], dict):
-                continue
-
-            for j in defaultOptions[k]:
-                self.options[k].setdefault(j, defaultOptions[k][j])
-
+        return options
 
     def initializeColorMap(self):
         self.colorMap = dict()
@@ -120,28 +73,25 @@ class Simulator(object):
 
     def initialize(self):
 
-        self.dt = self.options['dt']
         self.controllerTypeOrder = ['default']
 
-        self.setDefaultOptions()
-
-        self.Sensor = SensorObj(num_rays=self.options['Sensor']['numRays'],
-                                ray_length=self.options['Sensor']['rayLength'])
+        self.Sensor = SensorObj(num_rays=self.options.Sensor.numRays,
+                                ray_length=self.options.Sensor.rayLength)
 
         self.Controller = CubicObjectiveController(self.Sensor, u_max=4)
 
         self.Car = CarPlant(controller=self.Controller,
-                            velocity=self.options['Car']['velocity'])
+                            velocity=self.options.Car.velocity)
 
 
         # create the things needed for simulation
         om.removeFromObjectModel(om.findObjectByName('world'))
-        self.world = World.buildCircleWorld(percentObsDensity=self.options['World']['percentObsDensity'],
-                                            circleRadius=self.options['World']['circleRadius'],
-                                            nonRandom=self.options['World']['nonRandomWorld'],
-                                            scale=self.options['World']['scale'],
-                                            randomSeed=self.options['World']['randomSeed'],
-                                            obstaclesInnerFraction=self.options['World']['obstaclesInnerFraction'])
+        self.world = World.buildCircleWorld(percentObsDensity=self.options.World.percentObsDensity,
+                                            circleRadius=self.options.World.circleRadius,
+                                            nonRandom=self.options.World.nonRandomWorld,
+                                            scale=self.options.World.scale,
+                                            randomSeed=self.options.World.randomSeed,
+                                            obstaclesInnerFraction=self.options.World.obstaclesInnerFraction)
 
         om.removeFromObjectModel(om.findObjectByName('robot'))
         self.robot, self.frame = World.buildRobot()
@@ -156,7 +106,7 @@ class Simulator(object):
         rep.SetRotateAxisEnabled(0, False)
         rep.SetRotateAxisEnabled(1, False)
 
-        self.defaultControllerTime = self.options['runTime']['defaultControllerTime']
+        self.defaultControllerTime = self.options.runTime.defaultControllerTime
 
         print "Finished initialization"
 
@@ -186,7 +136,7 @@ class Simulator(object):
             controlInput = self.Controller.compute_u(raycastDistance=currentRaycast)
             self.controlInputData[idx] = controlInput
 
-            nextCarState = self.Car.simulate_one_step(control_input=controlInput, dt=self.dt)
+            nextCarState = self.Car.simulate_one_step(control_input=controlInput, dt=self.options.dt)
 
             # want to compute nextRaycast so we can do the SARSA algorithm
             self.setRobotFrameState(nextCarState)
@@ -220,7 +170,7 @@ class Simulator(object):
     def runBatchSimulation(self, endTime=None, dt=0.05):
 
         # for use in playback
-        self.dt = self.options['dt']
+        self.dt = self.options.dt
 
         self.endTime = self.defaultControllerTime # used to be the sum of the other times as well
 
@@ -312,7 +262,7 @@ class Simulator(object):
         self.timer = TimerCallback(targetFps=30)
         self.timer.callback = self.tick
 
-        playButtonFps = 1.0/self.dt
+        playButtonFps = 1.0/self.options.dt
         print "playButtonFPS", playButtonFps
         self.playTimer = TimerCallback(targetFps=playButtonFps)
         self.playTimer.callback = self.playTimerCallback
@@ -482,7 +432,7 @@ class Simulator(object):
     @staticmethod
     def loadFromFile(filename):
         filename = 'data/' + filename + ".out"
-        sim = Simulator(autoInitialize=False, verbose=False)
+        sim = Simulator(verbose=False)
 
         my_shelf = shelve.open(filename)
         sim.options = my_shelf['options']
@@ -519,9 +469,7 @@ if __name__ == "__main__":
     circleRadius = argNamespace.circleRadius[0]
     worldScale = argNamespace.worldScale[0]
     
-    sim = Simulator(percentObsDensity=percentObsDensity, endTime=endTime, randomizeControl=randomizeControl,
-                    nonRandomWorld=nonRandomWorld, circleRadius=circleRadius, worldScale=worldScale,
-                    supervisedTrainingTime=supervisedTrainingTime)
+    sim = Simulator(endTime=endTime)
     sim.run()
 
 
