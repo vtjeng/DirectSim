@@ -1,7 +1,7 @@
 import numpy as np
 from abc import ABCMeta, abstractmethod
 import scipy
-
+import logging
 
 class AbstractController(object):
     __metaclass__ = ABCMeta

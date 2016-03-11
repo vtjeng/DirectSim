@@ -20,14 +20,19 @@ from sensor import SensorObj
 from world import World
 from bunch import *
 
+import logging
+
 class Simulator(object):
 
 
-    def __init__(self, endTime=40, options = None, verbose=True):
+    def __init__(self, endTime=40, options = None):
 
-        self.verbose = verbose
+        self.logger = Simulator.initialize_loggers() # TODO: give user an option to turn off logging
+
         self.startSimTime = time.time()
         self.collisionThreshold = 0.7
+
+        self.logger.info('Collision threshold is {}'.format(self.collisionThreshold))
 
         # create the visualizer object
         self.app = ConsoleApp()
@@ -38,7 +43,30 @@ class Simulator(object):
         else:
             self.options = Simulator.getDefaultOptions()
 
+        self.logger.info('Options are {}'.format(self.options.toDict()))
+
         self.initializeColorMap()
+
+    @staticmethod
+    def initialize_loggers():
+
+        run_id = time.strftime("%Y-%m-%d %H:%M:%S")
+        logger = logging.getLogger('simulator_run_log')
+        logger.setLevel(logging.DEBUG)
+
+        debug_file = logging.FileHandler('logs/{run_id}.debug'.format(run_id = run_id))
+        debug_file.setLevel(logging.DEBUG)
+        info_file = logging.FileHandler('logs/{run_id}.info'.format(run_id = run_id))
+        info_file.setLevel(logging.INFO)
+
+        formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+        debug_file.setFormatter(formatter)
+        info_file.setFormatter(formatter)
+
+        logger.addHandler(debug_file)
+        logger.addHandler(info_file)
+
+        return logger
 
     @staticmethod
     def getDefaultOptions():
@@ -56,6 +84,10 @@ class Simulator(object):
         options.Sensor = Bunch()
         options.Sensor.rayLength = 20
         options.Sensor.numRays = 20
+
+        options.controller = Bunch()
+        options.controller.type = CubicObjectiveController
+        options.controller.u_max = 4
 
         options.Car = Bunch()
         options.Car.velocity = 16
@@ -78,11 +110,10 @@ class Simulator(object):
         self.Sensor = SensorObj(num_rays=self.options.Sensor.numRays,
                                 ray_length=self.options.Sensor.rayLength)
 
-        self.Controller = CubicObjectiveController(self.Sensor, u_max=4)
+        self.Controller = self.options.controller.type(self.Sensor, u_max=self.options.controller.u_max)
 
         self.Car = CarPlant(controller=self.Controller,
                             velocity=self.options.Car.velocity)
-
 
         # create the things needed for simulation
         om.removeFromObjectModel(om.findObjectByName('world'))
@@ -115,6 +146,8 @@ class Simulator(object):
 
 
         self.setRandomCollisionFreeInitialState()
+        self.logger.info('Robot started from state {s}'.format(p = self.Car.state))
+
 
         currentCarState = np.copy(self.Car.state)
         self.setRobotFrameState(currentCarState)
@@ -134,6 +167,7 @@ class Simulator(object):
 
 
             controlInput = self.Controller.compute_u(raycastDistance=currentRaycast)
+            self.logger.debug('Control input was {u}'.format(u = controlInput))
             self.controlInputData[idx] = controlInput
 
             nextCarState = self.Car.simulate_one_step(control_input=controlInput, dt=self.options.dt)
@@ -149,7 +183,7 @@ class Simulator(object):
 
             # break if we are in collision
             if self.checkInCollision(nextRaycast):
-                if self.verbose: print "Had a collision, terminating simulation"
+                self.logger.info('Robot collided at timestep {t}'.format(t = self.counter))
                 break
 
             if self.counter >= simulationCutoff:

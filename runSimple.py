@@ -1,10 +1,10 @@
 __author__ = 'manuelli'
 from simulator import Simulator
 
-sim = Simulator(verbose=False)
+sim = Simulator()
 
-sim.options.World.randomSeed = 8
-sim.options.World.percentObsDensity = 4
+sim.options.World.randomSeed = 10
+sim.options.World.percentObsDensity = 40
 
 sim.initialize()
 sim.run()
