@@ -32,7 +32,7 @@ class SensorObj(object):
         for i in range(0,self.numRays):
             ray = self.rays[:,i]
             rayTransformed = np.array(frame.transform.TransformNormal(ray))
-            intersection = self.raycast(self.locator, origin, origin + rayTransformed*self.rayLength)
+            intersection = self.raycast(origin, origin + rayTransformed * self.rayLength)
             if intersection is None:
                 distances[i] = self.rayLength
             else:
@@ -40,7 +40,7 @@ class SensorObj(object):
 
         return distances
 
-    def raycast(self, locator, ray_origin, ray_end):
+    def raycast(self, ray_origin, ray_end):
 
         tolerance = 0.0 # intersection tolerance
         pt = [0.0, 0.0, 0.0] # data coordinate where intersection occurs
@@ -48,6 +48,6 @@ class SensorObj(object):
         pcoords = [0.0, 0.0, 0.0] # parametric location within cell (triangle) where intersection occurs
         subId = vtk.mutable(0) # sub id of cell intersection
 
-        result = locator.IntersectWithLine(ray_origin, ray_end, tolerance, lineT, pt, pcoords, subId)
+        result = self.locator.IntersectWithLine(ray_origin, ray_end, tolerance, lineT, pt, pcoords, subId)
 
         return pt if result else None

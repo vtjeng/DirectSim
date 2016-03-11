@@ -146,7 +146,7 @@ class Simulator(object):
 
 
         self.setRandomCollisionFreeInitialState()
-        self.logger.info('Robot started from state {s}'.format(p = self.Car.state))
+        self.logger.info('Robot started from state {s}'.format(s = self.Car.state))
 
 
         currentCarState = np.copy(self.Car.state)
@@ -363,7 +363,7 @@ class Simulator(object):
             ray = self.Sensor.rays[:,i]
             rayTransformed = np.array(frame.transform.TransformNormal(ray))
             #print "rayTransformed is", rayTransformed
-            intersection = self.Sensor.raycast(self.locator, origin, origin + rayTransformed*self.Sensor.rayLength)
+            intersection = self.Sensor.raycast(origin, origin + rayTransformed * self.Sensor.rayLength)
 
             if intersection is not None:
                 d.addLine(origin, intersection, color=[1,0,0])
