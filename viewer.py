@@ -66,11 +66,6 @@ class Viewer(object):
 
         cameracontrolpanel.CameraControlPanel(self.view).widget.show()
 
-        elapsed = time.time() - self.startSimTime
-        simRate = self.counter/elapsed
-        print "Total run time", elapsed
-        print "Ticks (Hz)", simRate
-        print "Number of steps taken", self.counter
         self.app.start()
 
     def tick(self):
@@ -123,14 +118,13 @@ class Viewer(object):
 
         sliderIdx = self.slider.value
 
-        controllerType = self.getControllerTypeFromCounter(sliderIdx)
-        colorMaxRange = self.colorMap[controllerType]
+        colorMaxRange = [0,1,0]
 
         for i in xrange(self.Sensor.numRays):
             ray = self.Sensor.rays[:,i]
             rayTransformed = np.array(frame.transform.TransformNormal(ray))
             #print "rayTransformed is", rayTransformed
-            intersection = self.Sensor.raycast(self.locator, origin, origin + rayTransformed*self.Sensor.rayLength)
+            intersection = self.Sensor.raycast(origin + rayTransformed * self.Sensor.rayLength)
 
             if intersection is not None:
                 d.addLine(origin, intersection, color=[1,0,0])
