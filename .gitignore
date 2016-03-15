@@ -3,3 +3,6 @@
 
 # avoid commiting compiled python files
 *.pyc
+
+# do not commit logs of individual runs
+logs/
