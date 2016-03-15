@@ -125,7 +125,7 @@ class Simulator(object):
                                             obstaclesInnerFraction=self.options.World.obstaclesInnerFraction)
 
         om.removeFromObjectModel(om.findObjectByName('robot'))
-        self.robot, self.frame = World.buildRobot()
+        self.robot, self.frame = World.buildPlane()
         self.locator = World.buildCellLocator(self.world.visObj.polyData)
         self.Sensor.setLocator(self.locator)
         self.frame = self.robot.getChildFrame()
