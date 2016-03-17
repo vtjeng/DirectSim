@@ -326,17 +326,23 @@ class Simulator(object):
         self.frame.connectFrameModified(self.updateDrawIntersection)
         self.updateDrawIntersection(self.frame)
 
-        applogic.resetCamera(viewDirection=[0.2,0,-1])
-        self.view.showMaximized()
-        self.view.raise_()
+
+        camera = self.view.camera()
+
+        robot_center = self.robot.getChildFrame().transform.TransformPoint([0,0,0])
+        robot_camera = self.robot.getChildFrame().transform.TransformPoint([-20,0,10])
+        camera.SetPosition(robot_camera)
+        camera.SetFocalPoint(robot_center)
+
+        # self.view.showMaximized()
+        # self.view.raise_()
         screen_grabber_panel = screengrabberpanel.ScreenGrabberPanel(self.view)
         screen_grabber_panel.widget.show()
 
         camera_control_panel = cameracontrolpanel.CameraControlPanel(self.view)
-        camera_control_panel.widget.show()
         camera_control_panel.trackerManager.setTarget(self.robot)
-        camera_control_panel.trackerManager.setTrackerMode('Smooth Follow')
-        # camera_control_panel.trackerManager.setTrackerMode('Position & Orientation')
+        camera_control_panel.trackerManager.setTrackerMode('Position & Orientation')
+        camera_control_panel.widget.show()
 
 
 
