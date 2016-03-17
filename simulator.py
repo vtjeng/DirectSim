@@ -125,7 +125,7 @@ class Simulator(object):
                                             obstaclesInnerFraction=self.options.World.obstaclesInnerFraction)
 
         om.removeFromObjectModel(om.findObjectByName('robot'))
-        self.robot, self.frame = World.buildPlane()
+        self.robot, self.frame = World.buildXWing()
         self.locator = World.buildCellLocator(self.world.visObj.polyData)
         self.Sensor.setLocator(self.locator)
         self.frame = self.robot.getChildFrame()
@@ -329,10 +329,16 @@ class Simulator(object):
         applogic.resetCamera(viewDirection=[0.2,0,-1])
         self.view.showMaximized()
         self.view.raise_()
-        panel = screengrabberpanel.ScreenGrabberPanel(self.view)
-        panel.widget.show()
+        screen_grabber_panel = screengrabberpanel.ScreenGrabberPanel(self.view)
+        screen_grabber_panel.widget.show()
 
-        cameracontrolpanel.CameraControlPanel(self.view).widget.show()
+        camera_control_panel = cameracontrolpanel.CameraControlPanel(self.view)
+        camera_control_panel.widget.show()
+        camera_control_panel.trackerManager.setTarget(self.robot)
+        camera_control_panel.trackerManager.setTrackerMode('Smooth Follow')
+        # camera_control_panel.trackerManager.setTrackerMode('Position & Orientation')
+
+
 
         elapsed = time.time() - self.startSimTime
         simRate = self.counter/elapsed
