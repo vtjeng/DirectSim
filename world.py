@@ -311,6 +311,20 @@ class World(object):
         return obj, robotFrame
 
     @staticmethod
+    def buildXWing():
+
+        rawPolyData = ioUtils.readPolyData('resources/Y891_x_wing.obj')
+        scale = 0.02
+        t = vtk.vtkTransform()
+        t.RotateZ(90)
+        t.Scale(scale, scale, scale)
+        polyData = filterUtils.transformPolyData(rawPolyData, t)
+
+        obj = vis.showPolyData(polyData, 'robot')
+        robotFrame = vis.addChildFrame(obj)
+        return obj, robotFrame
+
+    @staticmethod
     def buildCar():
         rawPolyData = ioUtils.readPolyData('resources/celica.obj')
         scale = 0.04
