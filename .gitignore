@@ -3,3 +3,6 @@
 
 # avoid commiting compiled python files
 *.pyc
+
+# avoid adding log files
+logs/*
