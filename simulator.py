@@ -92,7 +92,7 @@ class Simulator(object):
         options.Car = Bunch()
         options.Car.velocity = 16
 
-        options.dt = 0.05
+        options.dt = 1.0/30.0
 
         options.runTime = Bunch()
         options.runTime.defaultControllerTime = 100
@@ -293,7 +293,8 @@ class Simulator(object):
 
     def setupPlayback(self):
 
-        self.timer = TimerCallback(targetFps=30)
+        # shouldn't this targetFPS match?
+        self.timer = TimerCallback(targetFps=1.0/self.options.dt)
         self.timer.callback = self.tick
 
         playButtonFps = 1.0/self.options.dt
