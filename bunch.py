@@ -30,7 +30,7 @@ From https://github.com/dsc/bunch
 __version__ = '1.0.1'
 VERSION = tuple(map(int, __version__.split('.')))
 
-__all__ = ('Bunch', 'bunchify','unbunchify',)
+__all__ = ('Bunch', 'bunchify','unbunchify','merge_bunch')
 
 class Bunch(dict):
     """ A dictionary that provides attribute-style access.
@@ -282,6 +282,30 @@ def unbunchify(x):
     else:
         return x
 
+
+### Merging
+def merge_dict(d_1, d_2):
+    """
+    Merges two dictionaries, mutating the first. Elements in d_2 have priority.
+
+    Copied from http://stackoverflow.com/questions/7204805/dictionaries-of-dictionaries-merge
+    :param d_1:
+    :param d_2:
+    :return:
+    """
+    for key in d_2:
+        if key in d_1 and isinstance(d_1[key], dict) and isinstance(d_2[key], dict):
+            merge_dict(d_1[key], d_2[key])
+        else:
+            d_1[key] = d_2[key]
+    return d_1
+
+
+def merge_bunch(b_1, b_2):
+    d_1 = unbunchify(b_1)
+    d_2 = unbunchify(b_2)
+
+    return bunchify(merge_dict(d_1, d_2))
 
 ### Serialization
 

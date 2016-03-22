@@ -25,7 +25,13 @@ import logging
 class Simulator(object):
 
 
-    def __init__(self, endTime=40, options = None):
+    def __init__(self, endTime=40, options = Bunch()):
+        """
+
+        :param endTime:
+        :param options: User-specified options - uses default values if not specified.
+        :return:
+        """
 
         self.logger = Simulator.initialize_loggers() # TODO: give user an option to turn off logging
 
@@ -38,12 +44,41 @@ class Simulator(object):
         self.app = ConsoleApp()
         self.view = self.app.createView(useGrid=False)
 
-        if options != None:
-            self.options = options
-        else:
-            self.options = Simulator.getDefaultOptions()
+        self.options = merge_bunch(Simulator.getDefaultOptions(), options)
 
         self.logger.info('Options are {}'.format(self.options.toDict()))
+
+        self.Sensor = SensorObj(num_rays=self.options.Sensor.numRays,
+                                ray_length=self.options.Sensor.rayLength)
+
+        self.Controller = self.options.controller.type(self.Sensor, u_max=self.options.controller.u_max)
+
+        self.Car = CarPlant(controller=self.Controller,
+                            velocity=self.options.Car.velocity)
+
+        # create the things needed for simulation
+        om.removeFromObjectModel(om.findObjectByName('world'))
+        self.world = World.buildCircleWorld(percentObsDensity=self.options.World.percentObsDensity,
+                                            circleRadius=self.options.World.circleRadius,
+                                            nonRandom=self.options.World.nonRandomWorld,
+                                            scale=self.options.World.scale,
+                                            randomSeed=self.options.World.randomSeed,
+                                            obstaclesInnerFraction=self.options.World.obstaclesInnerFraction)
+
+        om.removeFromObjectModel(om.findObjectByName('robot'))
+        # self.robot is an object named 'robot', so we want to get rid of it before
+        self.robot, self.frame = World.buildXWing()
+        self.locator = World.buildCellLocator(self.world.visObj.polyData)
+        self.Sensor.setLocator(self.locator)
+        self.frame = self.robot.getChildFrame()
+        self.frame.setProperty('Scale', 3)
+        self.frame.setProperty('Edit', True)
+        self.frame.widget.HandleRotationEnabledOff()
+
+        rep = self.frame.widget.GetRepresentation()
+        rep.SetTranslateAxisEnabled(2, False)
+        rep.SetRotateAxisEnabled(0, False)
+        rep.SetRotateAxisEnabled(1, False)
 
     @staticmethod
     def initialize_loggers():
@@ -96,44 +131,6 @@ class Simulator(object):
         options.runTime.defaultControllerTime = 100
 
         return options
-
-    def initialize(self):
-
-        self.Sensor = SensorObj(num_rays=self.options.Sensor.numRays,
-                                ray_length=self.options.Sensor.rayLength)
-
-        self.Controller = self.options.controller.type(self.Sensor, u_max=self.options.controller.u_max)
-
-        self.Car = CarPlant(controller=self.Controller,
-                            velocity=self.options.Car.velocity)
-
-        # create the things needed for simulation
-        om.removeFromObjectModel(om.findObjectByName('world'))
-        self.world = World.buildCircleWorld(percentObsDensity=self.options.World.percentObsDensity,
-                                            circleRadius=self.options.World.circleRadius,
-                                            nonRandom=self.options.World.nonRandomWorld,
-                                            scale=self.options.World.scale,
-                                            randomSeed=self.options.World.randomSeed,
-                                            obstaclesInnerFraction=self.options.World.obstaclesInnerFraction)
-
-        om.removeFromObjectModel(om.findObjectByName('robot'))
-        # self.robot is an object named 'robot', so we want to get rid of it before
-        self.robot, self.frame = World.buildXWing()
-        self.locator = World.buildCellLocator(self.world.visObj.polyData)
-        self.Sensor.setLocator(self.locator)
-        self.frame = self.robot.getChildFrame()
-        self.frame.setProperty('Scale', 3)
-        self.frame.setProperty('Edit', True)
-        self.frame.widget.HandleRotationEnabledOff()
-        rep = self.frame.widget.GetRepresentation()
-        rep.SetTranslateAxisEnabled(2, False)
-        rep.SetRotateAxisEnabled(0, False)
-        rep.SetRotateAxisEnabled(1, False)
-
-        self.defaultControllerTime = self.options.runTime.defaultControllerTime
-
-        print "Finished initialization"
-
 
     def runSingleSimulation(self, controllerType='default', simulationCutoff=None):
 
@@ -196,10 +193,8 @@ class Simulator(object):
 
     def runBatchSimulation(self, endTime=None, dt=0.05):
 
-        # for use in playback
-        self.dt = self.options.dt
-
-        self.endTime = self.defaultControllerTime # used to be the sum of the other times as well
+        # what are we doing here?
+        self.endTime = self.options.runTime.defaultControllerTime
 
         self.t = np.arange(0.0, self.endTime, dt)
         maxNumTimesteps = np.size(self.t)
@@ -220,9 +215,9 @@ class Simulator(object):
 
         self.idxDict['default'] = self.counter
         loopStartIdx = self.counter
-        simCutoff = min(loopStartIdx + self.defaultControllerTime/dt, self.numTimesteps)
+        simCutoff = min(loopStartIdx + self.options.runTime.defaultControllerTime/dt, self.numTimesteps)
         
-        while ((self.counter - loopStartIdx < self.defaultControllerTime/dt) and self.counter < self.numTimesteps-1):
+        while ((self.counter - loopStartIdx < self.options.runTime.defaultControllerTime/dt) and self.counter < self.numTimesteps-1):
             self.printStatusBar()
             startIdx = self.counter
             runData = self.runSingleSimulation(controllerType='default',
@@ -441,10 +436,9 @@ class Simulator(object):
     @staticmethod
     def loadFromFile(filename):
         filename = 'data/' + filename + ".out"
-        sim = Simulator(verbose=False)
-
         my_shelf = shelve.open(filename)
-        sim.options = my_shelf['options']
+
+        sim = Simulator(verbose=False, options = my_shelf['options'])
         sim.initialize()
 
         sim.simulationData = my_shelf['simulationData']
