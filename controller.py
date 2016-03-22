@@ -45,21 +45,12 @@ class WeightedCubicController(AbstractController):
         return u_desired
 
 
-class LinearController(AbstractController):
+class WeightedLinearController(AbstractController):
     def compute_desired_u(self, raycast_distances):
-        w = [-0.01958262, -0.01414781, -0.0206654, -0.02948661, -0.03923019, -0.05285479, -0.06993342, -0.08271239, -0.0818335, -0.04416196, 0.04344241, 0.08568999, 0.08388192, 0.06810941, 0.05335488, 0.03873115, 0.02870925, 0.02036616, 0.01365856, 0.02027503]
+        w = [-0.03095658, -0.01949426, -0.02677003, -0.03462618, -0.04171019, -0.05536625, -0.07269059, -0.08088806, -0.07962131, -0.03693672, 0.03636901, 0.08357396, 0.08290121, 0.0689061, 0.05494826, 0.04255617, 0.03428646, 0.02521712, 0.0174142, 0.02976362]
         u_desired = np.dot(raycast_distances, w[::-1])
 
         return u_desired
-
-class WeightedLinearController(AbstractController):
-    def compute_desired_u(self, raycast_distances):
-        aggression = 2.0
-        w = [-0.02414684, -0.01669008, -0.02398767, -0.03327088, -0.04176279, -0.05485901, -0.07101605, -0.08306437, -0.08194158, -0.0424285, 0.04179754, 0.08612401, 0.08435971, 0.0685426, 0.05522676, 0.04182127, 0.03236405, 0.02317769, 0.01571788, 0.02476362]
-        u_desired = aggression * np.dot(raycast_distances, w[::-1])
-
-        return u_desired
-
 
 class CountIntersectionsController(AbstractController):
     def compute_desired_u(self, raycast_distances):
