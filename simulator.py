@@ -293,10 +293,6 @@ class Simulator(object):
 
     def setupPlayback(self):
 
-        # shouldn't this targetFPS match?
-        self.timer = TimerCallback(targetFps=1.0/self.options.dt)
-        self.timer.callback = self.tick
-
         playButtonFps = 1.0/self.options.dt
         print "playButtonFPS", playButtonFps
         self.playTimer = TimerCallback(targetFps=playButtonFps)
@@ -362,7 +358,6 @@ class Simulator(object):
             self.setupPlayback()
 
     def updateDrawIntersection(self, frame):
-
         origin = np.array(frame.transform.GetPosition())
         #print "origin is now at", origin
         d = DebugData()
@@ -412,16 +407,6 @@ class Simulator(object):
             raycast_distances = self.Sensor.raycast_all(self.frame)
 
         return np.min(raycast_distances) < self.collisionThreshold
-
-    # TODO: Ask Pete what the purpose of tick is
-    def tick(self):
-        x = np.sin(time.time())
-        y = np.cos(time.time())
-        state = np.array([x, y, 0.0])
-
-        self.setRobotFrameState(state)
-        if (time.time() - self.playTime) > self.endTime:
-            self.playTimer.stop()
 
     # just increment the slider, stop the timer if we get to the end
     def playTimerCallback(self):
