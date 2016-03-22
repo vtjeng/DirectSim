@@ -99,8 +99,6 @@ class Simulator(object):
 
     def initialize(self):
 
-        self.controllerTypeOrder = ['default']
-
         self.Sensor = SensorObj(num_rays=self.options.Sensor.numRays,
                                 ray_length=self.options.Sensor.rayLength)
 
@@ -119,6 +117,7 @@ class Simulator(object):
                                             obstaclesInnerFraction=self.options.World.obstaclesInnerFraction)
 
         om.removeFromObjectModel(om.findObjectByName('robot'))
+        # self.robot is an object named 'robot', so we want to get rid of it before
         self.robot, self.frame = World.buildXWing()
         self.locator = World.buildCellLocator(self.world.visObj.polyData)
         self.Sensor.setLocator(self.locator)
@@ -353,34 +352,19 @@ class Simulator(object):
 
     def updateDrawIntersection(self, frame):
         origin = np.array(frame.transform.GetPosition())
-        #print "origin is now at", origin
         d = DebugData()
-
-        sliderIdx = self.slider.value
-
-        colorMaxRange = [0,1,0]
 
         for i in xrange(self.Sensor.numRays):
             ray = self.Sensor.rays[:,i]
             rayTransformed = np.array(frame.transform.TransformNormal(ray))
-            #print "rayTransformed is", rayTransformed
             intersection = self.Sensor.raycast(origin, origin + rayTransformed * self.Sensor.rayLength)
 
             if intersection is not None:
                 d.addLine(origin, intersection, color=[1,0,0])
             else:
-                d.addLine(origin, origin+rayTransformed*self.Sensor.rayLength, color=colorMaxRange)
+                d.addLine(origin, origin+rayTransformed*self.Sensor.rayLength, color=[0,1,0])
 
         vis.updatePolyData(d.getPolyData(), 'rays', colorByName='RGB255')
-
-    def getControllerTypeFromCounter(self, counter):
-        name = self.controllerTypeOrder[0]
-
-        for controllerType in self.controllerTypeOrder[1:]:
-            if counter >= self.idxDict[controllerType]:
-                name = controllerType
-
-        return name
 
     def setRobotFrameState(self, q):
         (x, y, theta) = q
