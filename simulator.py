@@ -45,8 +45,6 @@ class Simulator(object):
 
         self.logger.info('Options are {}'.format(self.options.toDict()))
 
-        self.initializeColorMap()
-
     @staticmethod
     def initialize_loggers():
 
@@ -98,10 +96,6 @@ class Simulator(object):
         options.runTime.defaultControllerTime = 100
 
         return options
-
-    def initializeColorMap(self):
-        self.colorMap = dict()
-        self.colorMap['default'] = [0,1,0]
 
     def initialize(self):
 
@@ -364,8 +358,7 @@ class Simulator(object):
 
         sliderIdx = self.slider.value
 
-        controllerType = self.getControllerTypeFromCounter(sliderIdx)
-        colorMaxRange = self.colorMap[controllerType]
+        colorMaxRange = [0,1,0]
 
         for i in xrange(self.Sensor.numRays):
             ray = self.Sensor.rays[:,i]
