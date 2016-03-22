@@ -400,18 +400,13 @@ class Simulator(object):
         self.sliderMovedByPlayTimer = False
 
     def onPlayButton(self):
-
         if self.playTimer.isActive():
-            self.onPauseButton()
-            return
+            print 'pause'
+            self.playTimer.stop()
+        else:
+            print 'play'
+            self.playTimer.start()
 
-        print 'play'
-        self.playTimer.start()
-        self.playTime = time.time()
-
-    def onPauseButton(self):
-        print 'pause'
-        self.playTimer.stop()
 
     # TODO: Ask Pete how all these save to file things work.
     def saveToFile(self, filename):
