@@ -289,9 +289,9 @@ def merge_dict(d_1, d_2):
     Merges two dictionaries, mutating the first. Elements in d_2 have priority.
 
     Copied from http://stackoverflow.com/questions/7204805/dictionaries-of-dictionaries-merge
-    :param d_1:
-    :param d_2:
-    :return:
+    :param d_1: First dictionary. NOTE: Will be mutated.
+    :param d_2: Second dictionary.
+    :return: Merged dictionary.
     """
     for key in d_2:
         if key in d_1 and isinstance(d_1[key], dict) and isinstance(d_2[key], dict):
