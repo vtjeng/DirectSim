@@ -15,7 +15,7 @@ from director.debugVis import DebugData
 from director.timercallback import TimerCallback
 
 from carPlant import CarPlant
-from controller import *
+from controller import NullController
 from sensor import SensorObj
 from world import World
 from bunch import *
@@ -119,7 +119,7 @@ class Simulator(object):
         options.Sensor.numRays = 20
 
         options.controller = Bunch()
-        options.controller.type = CubicObjectiveController
+        options.controller.type = NullController
         options.controller.u_max = 4
 
         options.Car = Bunch()
