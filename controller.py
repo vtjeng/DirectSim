@@ -35,7 +35,8 @@ class AbstractController(object):
 
 class CubicObjectiveController(AbstractController):
     """
-    Has the form u = (w*(y-y_max))^(1/3), where w are (a vector of) weights determined by supervised learning for a specific choice of cost function.
+    Has the form u = (w*(y-y_max))^(1/3), where w are (a vector of) weights determined by supervised learning for a
+     specific choice of cost function.
     """
     def compute_desired_u(self, raycast_distances):
         w = [-0.12933211, -0.1168573, -0.18053814, -0.29548549, -0.43497715, -0.64520728, -0.93109957, -1.14716128, -1.19673222, -0.62145319, 0.61387357, 1.24814345, 1.16823557, 0.89885198, 0.64761157, 0.430246, 0.28741517, 0.17543379, 0.10411869, 0.13474329]
